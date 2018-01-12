@@ -1,59 +1,81 @@
-const http = require('http');
-
+const toKeyValue = kv=>{
+    let parts = kv.split('=');
+    return {key:parts[0].trim(),value:parts[1].trim()};
+};
+const accumulate = (o,kv)=> {
+  o[kv.key] = kv.value;
+  return o;
+};
+const parseBody = text=> text && text.split('&').map(toKeyValue).reduce(accumulate,{}) || {};
+let redirect = function(path){
+  console.log(`redirecting to ${path}`);
+  this.statusCode = 302;
+  this.setHeader('location',path);
+  this.end();
+};
+const parseCookies = text=> {
+  try {
+    return text && text.split(';').map(toKeyValue).reduce(accumulate,{}) || {};
+  }catch(e){
+    return {};
+  }
+}
 let invoke = function(req,res){
   let handler = this._handlers[req.method][req.url];
   if(!handler){
     res.statusCode = 404;
+    res.write('File not found!');
     res.end();
     return;
   }
   handler(req,res);
 }
-
-let parseBody = (text)=> text && text.split('&').reduce((body,keyValuePair)=>{
-  let contents = keyValuePair.split('=');
-  body[contents[0]] = contents[1];
-  return body;
-},{});
-
-const init = function (){
+const initialize = function(){
   this._handlers = {GET:{},POST:{}};
-  this._preProcessors = [];
+  this._preprocess = [];
+};
+const get = function(url,handler){
+  this._handlers.GET[url] = handler;
 }
+const post = function(url,handler){
+  this._handlers.POST[url] = handler;
+};
+const use = function(handler){
+  this._preprocess.push(handler);
+};
 
-const get = function(url,callback){
-  this._handlers.GET[url] = callback;
-}
-const post = function(url,callback){
-  this._handlers.POST[url] = callback;
-}
-const use = function(callback){
-  this._preProcessors.push(callback)
+let urlIsOneOf = function(urls){
+  return urls.includes(this.url);
 }
 const main = function(req,res){
-  let content = "";
-  this._preProcessors.forEach(f=>f(req,res));
-  console.log(`${req.method} ${req.url}`);
-  req.on('data',function(data){
-    content += data.toString();
-  });
+  console.log(`Requested for ${req.url}  method: ${req.method}`);
+  console.log(req.headers);
+  res.redirect = redirect.bind(res);
+  req.urlIsOneOf = urlIsOneOf.bind(req);
+  req.cookies = parseCookies(req.headers.cookie||'');
+  let content="";
+  req.on('data',data=>content+=data.toString())
   req.on('end',()=>{
     req.body = parseBody(content);
-    content = "";
-    console.log("Data :",req.body);
+    content="";
+    debugger;
+    this._preprocess.forEach(middleware=>{
+      if(res.finished) return;
+      middleware(req,res);
+    });
+    if(res.finished) return;
     invoke.call(this,req,res);
-  })
-}
+  });
+};
 
-let create = function(){
-  let webApp = function(req,res){
-    main.call(webApp,req,res)
+let create = ()=>{
+  let rh = (req,res)=>{
+    main.call(rh,req,res)
   };
-  init.call(webApp)
-  webApp.get = get;
-  webApp.post = post;
-  webApp.use = use;
-  return webApp;
+  initialize.call(rh);
+  rh.get = get;
+  rh.post = post;
+  rh.use = use;
+  return rh;
 }
-
 exports.create = create;
