@@ -1,0 +1,82 @@
+const assert = require('chai').assert;
+const TodoList = require('../src/todolist.js');
+const TodoItem = require('../src/todoItem.js');
+
+describe('testing todo list',()=>{
+  beforeEach(()=>{
+    todo = new TodoList('todo1',"this is a todo",'this is the description of the todo')
+  });
+  it('should get the id',()=>{
+    assert.equal(todo.ID,'todo1');
+  });
+  it('should get the title',()=>{
+    assert.equal(todo.title,'this is a todo');
+  });
+  it('should get the description ',()=>{
+    assert.equal(todo.description,'this is the description of the todo');
+  });
+  it('should get the tasks it have',()=>{
+    assert.equal(todo.noOfTasks,0);
+  });
+  it('should edit the title',()=>{
+    assert.equal(todo.title,'this is a todo');
+    todo.editTitle("this is edited title");
+    assert.equal(todo.title,"this is edited title")
+  });
+  it('should edit the description',()=>{
+    assert.equal(todo.description,'this is the description of the todo');
+    todo.editDescription('this is new description');
+    assert.equal(todo.description,"this is new description");
+  });
+  it('should add a new task',()=>{
+    todo.addTask('new task','this is a new task');
+    let expected = []
+    expected.push(new TodoItem('item1','new task','this is a new task'));
+    assert.deepEqual(todo.getItems,expected);
+  });
+  it('should edit the task',()=>{
+    todo.addTask('new task','this is a new task');
+    let expected = []
+    expected.push(new TodoItem('item1','new task','this is a new task'));
+    expected[0].editTitle('this is new title');
+    todo.editTask('item1','_title','this is new title');
+    assert.deepEqual(todo.getItems,expected);
+    expected[0].editDescription('this is new description');
+    todo.editTask('item1','desc','this is new description');
+    assert.deepEqual(todo.getItems,expected);
+  });
+  it('should delete a task',()=>{
+    todo.addTask('new task','this is a new task');
+    todo.addTask('another new task','this is another new task');
+    let expected = []
+    expected.push(new TodoItem('item1','new task','this is a new task'));
+    expected.push(new TodoItem('item2','another new task','this is another new task'));
+    assert.deepEqual(todo.getItems,expected);
+    expected.shift();
+    todo.deleteTask('item1');
+    assert.deepEqual(todo.getItems,expected);
+  });
+  it('should mark a task as done',()=>{
+    todo.addTask('new task','this is a new task');
+    todo.addTask('another new task','this is another new task');
+    let expected = [];
+    expected.push(new TodoItem('item1','new task','this is a new task'));
+    expected.push(new TodoItem('item2','another new task','this is another new task'));
+    todo.markTaskDone('item1');
+    expected[0].markDone();
+    assert.deepEqual(todo.getItems[0],expected[0]);
+  });
+  it('should mark a task undone',()=>{
+    todo.addTask('new task','this is a new task');
+    todo.addTask('another new task','this is another new task');
+    let expected = [];
+    expected.push(new TodoItem('item1','new task','this is a new task'));
+    expected.push(new TodoItem('item2','another new task','this is another new task'));
+    todo.markTaskDone('item1');
+    expected[0].markDone();
+    assert.deepEqual(todo.getItems[0],expected[0]);
+    todo.markTaskUndone('item1');
+    expected[0].markUndone();
+    assert.deepEqual(todo.getItems[0],expected[0]);
+  });
+});
