@@ -29,6 +29,21 @@ describe('testing user module',()=>{
     user.addTodo('a new Todo',"this is a new Todo");
     user.addTodoItem('todo1','a new task',"this is a new task");
     let expected = new TodoItem('item1','a new task',"this is a new task");
-
+    expected.markDone();
+    let item = user.getTodoItem('todo1','item1');
+    item.markDone();
+    assert.deepEqual(item,expected);
+  });
+  it('should mark particular as undone',()=>{
+    user.addTodo('a new Todo',"this is a new Todo");
+    user.addTodoItem('todo1','a new task',"this is a new task");
+    let expected = new TodoItem('item1','a new task',"this is a new task");
+    expected.markDone();
+    let item = user.getTodoItem('todo1','item1');
+    item.markDone();
+    assert.deepEqual(item,expected);
+    item.markUndone();
+    expected.markUndone();
+    assert.deepEqual(item,expected);
   });
 });

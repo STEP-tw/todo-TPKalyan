@@ -18,24 +18,27 @@ class User {
   get noOfTodos(){
     return this.allTodos.length;
   }
-  getTodo(todoId){
-    return this.todos[todoId];
-  }
   addTodo(title,desc){
     let todoID = `todo${this.noOfTodos + 1}`;
     this.todos[todoID] = new TodoList(todoID,title,desc);
+  }
+  getTodo(todoId){
+    return this.todos[todoId];
   }
   addTodoItem(todoID,title,desc){
     let todo = this.getTodo(todoID);
     todo.addItem(title,desc);
   }
-  markDone(todoID,taskId){
-    let todo = this.getTodo(todoID);
-    todo.getItem(taskId).markDone();
+  getTodoItem(todoID,itemId){
+    return this.getTodo(todoID).getItem(itemId);
   }
-  markUndone(todoID,taskId){
+  markDone(todoID,itemId){
     let todo = this.getTodo(todoID);
-    todo.getItem(taskId).markUndone();
+    todo.getItem(itemId).markDone();
+  }
+  markUndone(todoID,itemId){
+    let todo = this.getTodo(todoID);
+    todo.getItem(itemId).markUndone();
   }
 }
 
