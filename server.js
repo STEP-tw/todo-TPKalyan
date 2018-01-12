@@ -98,4 +98,9 @@ app.post('/login',(req,res)=>{
   res.redirect('/');
 });
 
+app.get('/logout',(req,res)=>{
+  delete registered_users.find(user=>user.name == req.user.name).sessionid;
+  res.redirect('/login');
+  res.end();
+})
 let server = http.createServer(app).listen(port);
