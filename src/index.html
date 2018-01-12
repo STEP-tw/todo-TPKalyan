@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Todo</title>
+    <script type="text/javascript">
+      writeName = function(){
+        let userName = this.responseText;
+        document.getElementById('userName').innerText = `Welcome ${userName}`;
+      };
+      getName = function(){
+        let userNameRequest = new XMLHttpRequest();
+        userNameRequest.onload = writeName;
+        userNameRequest.open("GET","/getUserName");
+        userNameRequest.send();
+      };
+    </script>
+  </head>
+  <body onload="getName();writeName()">
+    <h1 id = "userName"></h1>
+  </body>
+</html>
