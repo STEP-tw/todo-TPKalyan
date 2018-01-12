@@ -23,10 +23,10 @@ class TodoList {
     });
     return items;
   }
-  get noOfTasks(){
+  get noOfItems(){
     return this.getItems.length;
   }
-  getTask(taskId){
+  getItem(taskId){
     return this.items[taskId];
   }
   editTitle(newTitle){
@@ -35,23 +35,23 @@ class TodoList {
   editDescription(newDesc){
     this.desc = newDesc;
   }
-  addTask(title,desc){
-    let taskID = `item${this.noOfTasks + 1}`;
+  addItem(title,desc){
+    let taskID = `item${this.noOfItems + 1}`;
     this.items[taskID] = new TodoItem(taskID,title,desc);
   }
-  editTask(taskID,fieldToEdit,newContent){
+  editItem(taskID,fieldToEdit,newContent){
     this.items[taskID][fieldToEdit] = newContent;
   }
-  deleteTask(taskID){
+  deleteItem(taskID){
     delete this.items[taskID];
   }
   map(mapper){
     this.getItems.map();
   }
-  markTaskDone(taskID){
+  markItemDone(taskID){
     this.items[taskID].markDone();
   }
-  markTaskUndone(taskID){
+  markItemUndone(taskID){
     this.items[taskID].markUndone();
   }
 }
