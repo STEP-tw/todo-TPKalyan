@@ -18,7 +18,7 @@ class User {
   get noOfTodos(){
     return this.allTodos.length;
   }
-  addTodo(title,desc){
+  addTodo(title,desc=""){
     let todoID = `todo${this.noOfTodos + 1}`;
     this.todos[todoID] = new TodoList(todoID,title,desc);
   }

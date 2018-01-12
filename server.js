@@ -5,11 +5,11 @@ const data = require('./data/usersdata.json');
 const User = require('./src/user.js');
 const port = process.argv[process.argv.length - 1];
 
-let registered_users = [
-  {userName:'bhanutv',name:'Bhanu Teja Verma'},
-  {userName:'harshab',name:'Harsha Vardhana'},
-  {userName:'madhu',name:'Madhuri kondekar jain'}
-];
+let users = ['bhanutv','harshab','madhu'];
+
+let registered_users = users.map((user)=>{
+  return new User(user);
+});
 
 const loadUser = (req,res)=>{
   let sessionid = req.cookies.sessionid;
@@ -59,7 +59,19 @@ const redirectLoggedInUserToHome = function(req,res){
   if(req.urlIsOneOf(['/login','/login.html']) && req.user) res.redirect('/index');
 }
 
+let staticHTMLPages = ['/index','/addTodo'];
+
+let staticCSSPages = ['/styles.css']
+
 app = webapp.create();
+
+staticHTMLPages.forEach((url)=>{
+  app.get(url,serverStatic(`./src/${url}.html`));
+})
+
+staticCSSPages.forEach((url)=>{
+  app.get(url,serverStatic(`./src/${url}`));
+})
 
 app.use(loadUser);
 
@@ -71,7 +83,14 @@ app.get('/',(req,res)=>{
   res.redirect('/index');
 });
 
-app.get('/index',serverStatic('./src/index.html'))
+app.get('/requests.js',serverStatic('./src/requests.js'));
+
+app.get('/getTodos',(req,res)=>{
+  let todos = JSON.stringify(req.user.allTodos);
+  console.log(todos);
+  res.write(todos);
+  res.end();
+})
 
 app.get('/getUserName',(req,res)=>{
   res.write(req.user.name);
@@ -102,5 +121,13 @@ app.get('/logout',(req,res)=>{
   delete registered_users.find(user=>user.name == req.user.name).sessionid;
   res.redirect('/login');
   res.end();
+});
+
+app.post('/addTodo',(req,res)=>{
+  let title = req.body.title.replace(/\+/g,' ');
+  let desc = req.body.desc.replace(/\+/g,' ');
+  req.user.addTodo(title,desc);
+  res.redirect('/index');
 })
+
 let server = http.createServer(app).listen(port);

@@ -3,20 +3,22 @@
   <head>
     <meta charset="utf-8">
     <title>Todo</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/requests.js" charset="utf-8"></script>
     <script type="text/javascript">
-      writeName = function(){
-        let userName = this.responseText;
-        document.getElementById('userName').innerText = `Welcome ${userName}`;
-      };
-      getName = function(){
-        let userNameRequest = new XMLHttpRequest();
-        userNameRequest.onload = writeName;
-        userNameRequest.open("GET","/getUserName");
-        userNameRequest.send();
-      };
+      init = function(){
+        getName();
+        populateTodos();
+      }
     </script>
   </head>
-  <body onload="getName();writeName()">
+  <body onload="init()">
     <h1 id = "userName"></h1>
+    <a class = 'divButton' href="/addTodo">
+      Add
+    </a>
+    <table id = 'todos'>
+
+    </table>
   </body>
 </html>
