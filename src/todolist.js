@@ -29,11 +29,8 @@ class TodoList {
   getItem(taskId){
     return this.items[taskId];
   }
-  editTitle(newTitle){
-    this._title = newTitle
-  }
-  editDescription(newDesc){
-    this.desc = newDesc;
+  edit(fieldToEdit,newTitle){
+    this[fieldToEdit] = newTitle
   }
   addItem(title,desc){
     let taskID = `item${this.noOfItems + 1}`;

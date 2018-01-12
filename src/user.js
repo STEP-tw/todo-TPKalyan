@@ -40,6 +40,17 @@ class User {
     let todo = this.getTodo(todoID);
     todo.getItem(itemId).markUndone();
   }
+  editTodo(todoID,fieldToEdit,newContent){
+    let todo = this.getTodo(todoID);
+    todo.edit(fieldToEdit,newContent);
+  }
+  deleteItem(todoID,itemId){
+    let todo = this.getTodo(todoID);
+    todo.deleteItem(itemId);
+  }
+  deleteTodo(todoID){
+    delete this.todos[todoID];
+  }
 }
 
 module.exports = User;

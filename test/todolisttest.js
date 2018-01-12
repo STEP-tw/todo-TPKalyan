@@ -26,12 +26,12 @@ describe('testing todo list',()=>{
   });
   it('should edit the title',()=>{
     assert.equal(todo.title,'this is a todo');
-    todo.editTitle("this is edited title");
+    todo.edit('_title',"this is edited title");
     assert.equal(todo.title,"this is edited title")
   });
   it('should edit the description',()=>{
     assert.equal(todo.description,'this is the description of the todo');
-    todo.editDescription('this is new description');
+    todo.edit('desc','this is new description');
     assert.equal(todo.description,"this is new description");
   });
   it('should add a new task',()=>{
