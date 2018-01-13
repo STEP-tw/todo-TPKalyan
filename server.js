@@ -34,7 +34,7 @@ const getExtension = (filePath)=>{
   return filePath.substr(filePath.lastIndexOf('.')+1);
 }
 
-const serverStatic = function(filePath){
+const serveStaticFile = function(filePath){
   return function(req,res){
     res.setHeader("Content-Type",contentType[getExtension(filePath)]);
     res.statusCode = 200;
@@ -63,14 +63,20 @@ let staticHTMLPages = ['/index','/addTodo'];
 
 let staticCSSPages = ['/styles.css']
 
+let images = ['/edit.jpg','/delete.jpg'];
+
 app = webapp.create();
 
 staticHTMLPages.forEach((url)=>{
-  app.get(url,serverStatic(`./src/${url}.html`));
+  app.get(url,serveStaticFile(`./src/${url}.html`));
 })
 
 staticCSSPages.forEach((url)=>{
-  app.get(url,serverStatic(`./src/${url}`));
+  app.get(url,serveStaticFile(`./src/${url}`));
+})
+
+images.forEach((url)=>{
+  app.get(url,serveStaticFile(`./src/images${url}`))
 })
 
 app.use(loadUser);
@@ -83,11 +89,10 @@ app.get('/',(req,res)=>{
   res.redirect('/index');
 });
 
-app.get('/requests.js',serverStatic('./src/requests.js'));
+app.get('/requests.js',serveStaticFile('./src/requests.js'));
 
 app.get('/getTodos',(req,res)=>{
-  let todos = JSON.stringify(req.user.allTodos);
-  console.log(todos);
+  let todos = JSON.stringify(req.user.toHtml());
   res.write(todos);
   res.end();
 })

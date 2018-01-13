@@ -5,20 +5,7 @@ writeName = function(){
 writeTodos = function(){
   let todos = JSON.parse(this.responseText);
   let table = document.getElementById('todos');
-  todos.forEach((todo)=>{
-    let row = document.createElement('tr');
-    let title = document.createElement('td');
-    let titleText = document.createTextNode(todo._title);
-    title.appendChild(titleText);
-    let desc = document.createElement('td');
-    let descText = document.createTextNode(todo.desc);
-    desc.appendChild(descText);
-    row.appendChild(title);
-    row.appendChild(desc);
-    row.id = todo.id;
-    row.onclick = `window.location = ${todo.id}`;
-    table.appendChild(row);
-  });
+  table.innerHTML = todos;
 }
 getName = function(){
   let userNameRequest = new XMLHttpRequest();

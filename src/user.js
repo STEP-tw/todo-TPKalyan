@@ -18,6 +18,18 @@ class User {
   get noOfTodos(){
     return this.allTodos.length;
   }
+  toHtml(){
+    let html = `
+    <tr>
+      <th>S.no</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>edit</th>
+      <th>delete</th>
+    </tr>`;
+    this.allTodos.forEach((todo)=>{html += todo.toHtml()});
+    return html;
+  }
   addTodo(title,desc=""){
     let todoID = `todo${this.noOfTodos + 1}`;
     this.todos[todoID] = new TodoList(todoID,title,desc);

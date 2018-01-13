@@ -1,5 +1,14 @@
 const TodoItem = require('./todoitem.js');
 
+returnRequest = function(urlToRequest,data=''){
+  return `function(){
+    let request = new XMLHttpRequest();
+    request.onload = writeTodos;
+    request.open("GET",${urlToRequest});
+    request.send(data);
+  }`;
+}
+
 class TodoList {
   constructor(id,title,desc) {
     this.id = id;
@@ -50,6 +59,17 @@ class TodoList {
   }
   markItemUndone(taskID){
     this.items[taskID].markUndone();
+  }
+  toHtml(){
+    let html = `
+    <tr onclick = "window.location = '${this.id}'">
+      <td>${this.id}</td>
+      <td>${this._title}</td>
+      <td>${this.desc}</td>
+      <td><img onclick = "${returnRequest(`/edit${this.id}`)}" class="icon" src="/edit.jpg" alt="edit icon"/></td>
+      <td><img onclick = "${returnRequest(`/delete${this.id}`)}" class="icon" src="/delete.jpg" alt="delete icon"/></td>
+    </tr>`;
+    return html;
   }
 }
 
