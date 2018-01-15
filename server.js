@@ -5,10 +5,21 @@ const data = require('./data/usersdata.json');
 const User = require('./src/user.js');
 const port = process.argv[process.argv.length - 1];
 
+let head = fs.readFileSync('./src/headTodo.txt');
+let tail = fs.readFileSync('./src/tailTodo.txt');
+
+let allTodos = {};
+try {
+  allTodos = JSON.parse(fs.readFileSync('./data/usersdata.json'));
+} catch (e) {
+  allTodos = {};
+}
+
 let users = ['bhanutv','harshab','madhu'];
 
 let registered_users = users.map((user)=>{
-  return new User(user);
+  let newUser = new User(user);
+  return newUser;
 });
 
 const loadUser = (req,res)=>{
@@ -32,6 +43,10 @@ const contentType = {
 
 const getExtension = (filePath)=>{
   return filePath.substr(filePath.lastIndexOf('.')+1);
+}
+
+const addTodo = function(user,title,desc){
+  user.addTodo(title,desc);
 }
 
 const serveStaticFile = function(filePath){
@@ -59,16 +74,16 @@ const redirectLoggedInUserToHome = function(req,res){
   if(req.urlIsOneOf(['/login','/login.html']) && req.user) res.redirect('/index');
 }
 
-let staticHTMLPages = ['/index','/addTodo'];
+let staticHTMLPages = ['/index','/addTodo','/'];
 
 let staticCSSPages = ['/styles.css']
 
 let images = ['/edit.jpg','/delete.jpg'];
 
-app = webapp.create();
+let app = webapp.create();
 
 staticHTMLPages.forEach((url)=>{
-  app.get(url,serveStaticFile(`./src/${url}.html`));
+  app.get(url,serveStaticFile(`./src/${(url == '/' ? '/index' : url)}.html`));
 })
 
 staticCSSPages.forEach((url)=>{
@@ -85,14 +100,10 @@ app.use(redirectLoggedInUserToHome);
 
 app.use(redirectLoggedOutUserToLogin);
 
-app.get('/',(req,res)=>{
-  res.redirect('/index');
-});
-
 app.get('/requests.js',serveStaticFile('./src/requests.js'));
 
 app.get('/getTodos',(req,res)=>{
-  let todos = JSON.stringify(req.user.toHtml());
+  let todos = JSON.stringify(req.user.toHtmlRow());
   res.write(todos);
   res.end();
 })
@@ -118,20 +129,35 @@ app.post('/login',(req,res)=>{
   }
   let sessionid = new Date().getTime();
   res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
+  user.allTodos.forEach((todo)=>{
+    app.get(`${todo.id}`,(req,res)=>{
+      res.write(fs.readFileSync('./openTodo.html','utf8'));
+      res.end();
+    });
+  })
   user.sessionid = sessionid;
   res.redirect('/');
 });
 
 app.get('/logout',(req,res)=>{
   delete registered_users.find(user=>user.name == req.user.name).sessionid;
+
   res.redirect('/login');
   res.end();
 });
 
 app.post('/addTodo',(req,res)=>{
+  let user = req.user;
   let title = req.body.title.replace(/\+/g,' ');
   let desc = req.body.desc.replace(/\+/g,' ');
-  req.user.addTodo(title,desc);
+  addTodo(user,title,desc);
+  let todo = user.getTodo(title);
+  app.get(`/${title}`,(req,res)=>{
+    res.write(`${head}
+      ${todo.toHtml()}
+      ${tail}`);
+    res.end();
+  })
   res.redirect('/index');
 })
 

@@ -29,6 +29,13 @@ class TodoItem {
   get isDone(){
     return this.done;
   }
+  toHtmlRow(){
+    let html = `<tr>
+      <td>${this.title}</td>
+      <td>${this.description}</td>
+    </tr>`;
+    return (this.isDone) ? `<strike>${html}</strike>`: html;
+  }
 }
 
 module.exports = TodoItem;

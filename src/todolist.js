@@ -10,8 +10,7 @@ returnRequest = function(urlToRequest,data=''){
 }
 
 class TodoList {
-  constructor(id,title,desc) {
-    this.id = id;
+  constructor(title,desc) {
     this._title = title;
     this.desc = desc;
     this.items = {};
@@ -60,16 +59,24 @@ class TodoList {
   markItemUndone(taskID){
     this.items[taskID].markUndone();
   }
-  toHtml(){
+  toHtmlRow(){
     let html = `
-    <tr onclick = "window.location = '${this.id}'">
-      <td>${this.id}</td>
+    <tr onclick = "window.location = '${this.title}'">
       <td>${this._title}</td>
       <td>${this.desc}</td>
       <td><img onclick = "${returnRequest(`/edit${this.id}`)}" class="icon" src="/edit.jpg" alt="edit icon"/></td>
       <td><img onclick = "${returnRequest(`/delete${this.id}`)}" class="icon" src="/delete.jpg" alt="delete icon"/></td>
     </tr>`;
     return html;
+  }
+  toHtml(){
+    return `<h3>${this.title}</h3>
+    <h4>${this.desc}</h4>
+    <table>
+      <tr>
+        ${this.getItems.map(item=>item.toHtmlRow()).join('')}
+      </tr>
+    </table>`;
   }
 }
 

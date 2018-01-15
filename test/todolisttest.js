@@ -4,10 +4,7 @@ const TodoItem = require('../src/todoItem.js');
 
 describe('testing todo list',()=>{
   beforeEach(()=>{
-    todo = new TodoList('todo1',"this is a todo",'this is the description of the todo')
-  });
-  it('should get the id',()=>{
-    assert.equal(todo.ID,'todo1');
+    todo = new TodoList("this is a todo",'this is the description of the todo')
   });
   it('should get the title',()=>{
     assert.equal(todo.title,'this is a todo');

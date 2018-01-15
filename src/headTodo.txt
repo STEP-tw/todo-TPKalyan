@@ -14,7 +14,4 @@
       Add Item
     </a>
     <div>
-
-    </div>
-  </body>
-</html>
+      
