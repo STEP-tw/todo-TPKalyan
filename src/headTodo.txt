@@ -5,7 +5,8 @@
     <title>TODO</title>
     <script src="/requests.js" charset="utf-8"></script>
     <script type="text/javascript">
-
+      let path = window.location.pathname;
+      let todoID = path.split("/").pop();
     </script>
   </head>
   <body onload="init()">
@@ -14,4 +15,3 @@
       Add Item
     </a>
     <div>
-      
