@@ -1,10 +1,10 @@
 const assert = require('chai').assert;
-const TodoItem = require('../src/todoitem.js');
-const TodoList = require('../src/todolist.js');
-const User = require('../src/user.js');
+const TodoItem = require('../src/model/todoitem.js');
+const TodoList = require('../src/model/todolist.js');
+const User = require('../src/model/user.js');
 
-describe('testing model',()=>{
-  describe('testing todo item',()=>{
+describe('model',()=>{
+  describe('todo item',()=>{
     beforeEach(()=>{
       task = new TodoItem('item1','to write test cases','to write tests for todo item module');
     });
@@ -42,7 +42,7 @@ describe('testing model',()=>{
       assert.isNotOk(task.isDone);
     });
   });
-  describe('testing todo list',()=>{
+  describe('todo list',()=>{
     beforeEach(()=>{
       todo = new TodoList("this is a todo",'this is the description of the todo')
     });
@@ -117,7 +117,7 @@ describe('testing model',()=>{
       assert.deepEqual(todo.getItem('item1'),expected);
     });
   });
-  describe('testing user mode',()=>{
+  describe('user mode',()=>{
     beforeEach(()=>{
       user = new User('pawan');
     });
