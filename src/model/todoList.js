@@ -3,7 +3,11 @@ const TodoItem = require('./todoitem.js');
 returnRequest = function(urlToRequest,data=''){
   return `function(){
     let request = new XMLHttpRequest();
-    request.onload = writeTodos;
+    request.onload = function(){
+      let todos = JSON.parse(this.responseText);
+      let table = document.getElementById('todos');
+      table.innerHTML = todos;
+    };
     request.open("GET",${urlToRequest});
     request.send(data);
   }`;
@@ -14,9 +18,6 @@ class TodoList {
     this._title = title;
     this.desc = desc;
     this.items = {};
-  }
-  get ID(){
-    return this.id;
   }
   get title(){
     return this._title;
@@ -64,8 +65,8 @@ class TodoList {
     <tr onclick = "window.location = '${this.title}'">
       <td>${this._title}</td>
       <td>${this.desc}</td>
-      <td><img onclick = "${returnRequest(`/edit${this.id}`)}" class="icon" src="/edit.jpg" alt="edit icon"/></td>
-      <td><img onclick = "${returnRequest(`/delete${this.id}`)}" class="icon" src="/delete.jpg" alt="delete icon"/></td>
+      <td><img onclick = "${returnRequest(`/edit${this.title}`)}" class="icon" src="/edit.jpg" alt="edit icon"/></td>
+      <td><img onclick = "${returnRequest(`/delete${this.title}`)}" class="icon" src="/delete.jpg" alt="delete icon"/></td>
     </tr>`;
     return html;
   }
